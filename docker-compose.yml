@@ -1,0 +1,30 @@
+version: "3"
+services:
+    db:
+        image: mariadb:latest
+        ports:
+            - "3306:3306"
+        volumes:
+            - "./logs/db:/var/logs/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: typechooooo
+            MYSQL_DATABASE: typecho
+            MYSQL_USER: typecho
+            MYSQL_PASSWORD: typecho
+        restart: on-failure
+    web:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - "./public:/data/wwwroot/typecho"
+            - "./config/nginx/typecho.conf:/etc/nginx/conf.d/default.conf"
+            - "./logs/web:/data/wwwlogs"
+        restart: on-failure
+    php:
+        build:
+            context: app/php
+        volumes:
+            - "./public:/data/wwwroot/typecho"
+            - "./config/php:/usr/local/etc/php"
+        restart: on-failure
